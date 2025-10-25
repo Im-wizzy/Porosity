@@ -1,19 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "./ExportButton";
 import { type SensorData } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-
 
 interface FirebaseConfigProps {
   projectId: string;
-  setProjectId: (id: string) => void;
   isConnected: boolean;
   onConnectionChange: (connected: boolean) => void;
   allData: SensorData[];
@@ -21,25 +17,21 @@ interface FirebaseConfigProps {
 
 export function FirebaseConfig({
   projectId,
-  setProjectId,
   isConnected,
   onConnectionChange,
   allData,
 }: FirebaseConfigProps) {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleConnect = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      onConnectionChange(true);
-      setIsLoading(false);
+  useEffect(() => {
+    if (isConnected) {
       toast({
         title: "Connection Success",
         description: `Connected to project: ${projectId}`,
       });
-    }, 1500);
-  };
+    }
+  }, [isConnected, projectId, toast]);
+
 
   const handleDisconnect = () => {
     onConnectionChange(false);
@@ -52,15 +44,8 @@ export function FirebaseConfig({
   return (
     <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg bg-card w-full md:w-auto shadow-sm">
       <div className="flex-grow w-full md:w-auto space-y-1.5">
-        <Label htmlFor="projectId" className="text-xs font-medium">Firebase Project ID</Label>
         <div className="flex items-center gap-2">
-            <Input
-                id="projectId"
-                value={projectId}
-                onChange={(e) => setProjectId(e.target.value)}
-                disabled={isConnected || isLoading}
-                className="w-full md:w-48"
-            />
+            <div className="text-sm font-medium pr-2">Project: <span className="font-mono bg-muted px-2 py-1 rounded-md text-sm">{projectId}</span></div>
             {isConnected ? (
                 <Badge className="bg-teal-600 hover:bg-teal-700 text-white">Connected</Badge>
             ) : (
@@ -75,9 +60,9 @@ export function FirebaseConfig({
             <ExportButton data={allData} />
           </>
         ) : (
-          <Button onClick={handleConnect} disabled={!projectId || isLoading} className="w-full sm:w-auto">
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? "Connecting..." : "Connect"}
+          <Button disabled={true} className="w-full sm:w-auto">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Connecting...
           </Button>
         )}
       </div>

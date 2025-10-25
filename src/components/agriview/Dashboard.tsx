@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSensorData, type SensorData } from "@/lib/firebase";
 import { FirebaseConfig } from "./FirebaseConfig";
 import { StatCard } from "./StatCard";
@@ -12,8 +12,13 @@ import { Thermometer, Droplets, Leaf } from "lucide-react";
 
 export function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
-  const [projectId, setProjectId] = useState("agriview-demo-project");
+  const projectId = "agriview-9541a";
   const sensorData = useSensorData(isConnected);
+
+  useEffect(() => {
+    // Auto-connect on component mount
+    setIsConnected(true);
+  }, []);
 
   const latestData = sensorData.length > 0 ? sensorData[sensorData.length - 1] : null;
   const chartData = sensorData.slice(-100);
@@ -27,7 +32,6 @@ export function Dashboard() {
         </div>
         <FirebaseConfig
           projectId={projectId}
-          setProjectId={setProjectId}
           isConnected={isConnected}
           onConnectionChange={setIsConnected}
           allData={sensorData}
