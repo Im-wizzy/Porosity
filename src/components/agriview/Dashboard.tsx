@@ -7,8 +7,9 @@ import { StatCard } from "./StatCard";
 import { SoilMoistureChart } from "./SoilMoistureChart";
 import { TempHumidityChart } from "./TempHumidityChart";
 import { SensorDataTable } from "./SensorDataTable";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Thermometer, Droplets, Leaf } from "lucide-react";
+import { ExportButton } from "./ExportButton";
 
 export function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
@@ -90,6 +91,9 @@ export function Dashboard() {
             <CardContent>
               <SensorDataTable data={sensorData} />
             </CardContent>
+            <CardFooter className="justify-end">
+                <ExportButton data={sensorData} />
+            </CardFooter>
           </Card>
         </section>
       </main>
